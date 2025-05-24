@@ -2,7 +2,7 @@ name: Update Daily Scripture
 
 on:
   schedule:
-    - cron: '0 6 * * *'  # Daily at 6 AM UTC (2 AM EDT)
+    - cron: '0 6 * * *'  # Runs daily at 6:00 AM UTC
   workflow_dispatch:
 
 jobs:
@@ -12,17 +12,27 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Fetch Daily Scripture & Reflection
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Generate daily scripture
         run: |
-          verse="“Peace I leave with you; my peace I give to you...”"
-          source="— John 14:27"
-          reflection="🕊️ Jesus offers not a fragile calm but a lasting peace — rooted in His presence, not our control."
-          echo "$verse  \n$source\n\n$reflection" > today.txt
+          node -e "
+          const fs = require('fs');
+          const verses = require('./verses.json');
+          const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+          const index = dayOfYear % verses.length;
+          const selected = verses[index];
+          const content = \`\${selected.verse}\n— \${selected.source}\n\n\${selected.reflection}\`;
+          fs.writeFileSync('today.txt', content);
+          "
 
       - name: Commit and push
         run: |
           git config --global user.name 'Ivan Script Bot'
           git config --global user.email 'script@widget.com'
           git add today.txt
-          git commit -m "Auto-update daily scripture"
+          git commit -m "Rotate scripture for today"
           git push
