@@ -1,0 +1,28 @@
+name: Update Daily Scripture
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Runs daily at 6:00 AM UTC
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Update scripture file
+        run: |
+          echo "“Peace I leave with you; my peace I give to you...”  
+— John 14:27
+
+🕊️ Jesus offers not a fragile calm but a lasting peace — rooted in His presence, not our control." > today.txt
+
+      - name: Commit and push
+        run: |
+          git config --global user.name 'Ivan Script Bot'
+          git config --global user.email 'script@widget.com'
+          git add today.txt
+          git commit -m "Daily scripture update"
+          git push
