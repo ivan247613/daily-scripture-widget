@@ -2,7 +2,7 @@ name: Update Daily Scripture
 
 on:
   schedule:
-    - cron: '0 6 * * *'  # Runs daily at 6:00 AM UTC
+    - cron: '0 6 * * *'  # Daily at 6 AM UTC (2 AM EDT)
   workflow_dispatch:
 
 jobs:
@@ -12,17 +12,17 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Update scripture file
+      - name: Fetch Daily Scripture & Reflection
         run: |
-          echo "“Peace I leave with you; my peace I give to you...”  
-— John 14:27
-
-🕊️ Jesus offers not a fragile calm but a lasting peace — rooted in His presence, not our control." > today.txt
+          verse="“Peace I leave with you; my peace I give to you...”"
+          source="— John 14:27"
+          reflection="🕊️ Jesus offers not a fragile calm but a lasting peace — rooted in His presence, not our control."
+          echo "$verse  \n$source\n\n$reflection" > today.txt
 
       - name: Commit and push
         run: |
           git config --global user.name 'Ivan Script Bot'
           git config --global user.email 'script@widget.com'
           git add today.txt
-          git commit -m "Daily scripture update"
+          git commit -m "Auto-update daily scripture"
           git push
